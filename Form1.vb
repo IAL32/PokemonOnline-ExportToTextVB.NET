@@ -2,26 +2,23 @@
     Dim MFBool As String
     Dim i, HP, Atk, Def, SAtk, SDef, Spd As Short
     Private Sub lst_Pokemon_Scroll()
+        'Uso questa sub per far si che il numero sia uguale
+        'edequivalente al Numero Pokémon corrispondente.
         lst_Numbers.TopIndex = lst_Pokemon.TopIndex
     End Sub
     Private Sub lst_Numbers_Scroll()
+        'Uso questa sub per far si che il numero sia uguale
+        'edequivalente al Numero Pokémon corrispondente.
         lst_Pokemon.TopIndex = lst_Numbers.TopIndex
     End Sub
     Private Sub lst_Pokemon_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lst_Pokemon.SelectedIndexChanged
         cmb_Forms_Filler()
+        'Ho aggiunto la gestione degli errori "Try", perché non tutti
+        'i Pokémon sono diversi nella loro parte femmina, quindi
+        'ogniqualvoltail programma non troverà il corrispondente
+        'di immagine femmina in sprites\female, non farà niente, ma si
+        'limiterà a mettere "Male" come sesso pre-impostato.
         lst_Numbers.SelectedIndex = lst_Pokemon.SelectedIndex
-        Select Case rd_Male.Checked
-            Case True
-                'Se Maschio
-                btn_Pokemon.Image = Image.FromFile(Application.StartupPath & "\sprites\shiny\" & lst_Pokemon.SelectedIndex & ".png")
-            Case False
-                'Se Femmina
-                Try
-                    btn_Pokemon.Image = Image.FromFile(Application.StartupPath & "\sprites\shiny\female\" & lst_Pokemon.SelectedIndex & ".png")
-                Catch FNF As System.IO.FileNotFoundException
-                    rd_Male.Checked = True
-                End Try
-        End Select
         Select Case rd_Male.Checked
             Case True
                 'Se Maschio
@@ -36,12 +33,13 @@
         End Select
     End Sub
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        'Con questo ciclo For...Next, genero una lista da 0 a 649
+        '(il numero dei pokémon)che poi va a riempire la lista dei numeri.
         Dim lst(649) As String
         For i As Short = 0 To 649
             lst(i) = i
             lst_Numbers.Items.Add(i)
         Next
-
         lst_Pokemon.SelectedIndex = 0
         cmb_Forms.SelectedIndex = 0
         cmb_Nature.SelectedIndex = 0
@@ -53,12 +51,18 @@
         cmb_Trait.SelectedIndex = 0
     End Sub
     Private Sub rd_Female_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rd_Female.CheckedChanged
+        'Ho aggiunto la gestione degli errori "Try", perché non tutti
+        'i Pokémon sono diversi nella loro parte femmina, quindi
+        'ogniqualvoltail programma non troverà il corrispondente
+        'di immagine femmina in sprites\female, non farà niente, ma si
+        'limiterà a mettere "Male" come sesso pre-impostato.
         Select Case rd_Female.Checked
             Case True
                 Try
                     MFBool = "F"
                     btn_Pokemon.Image = Image.FromFile(Application.StartupPath & "\sprites\female\" & lst_Pokemon.SelectedIndex & ".png")
                 Catch FNFExc As IO.FileNotFoundException
+                    rd_Male.Checked = True
                 End Try
             Case False
                 MFBool = "M"
@@ -66,32 +70,30 @@
         End Select
     End Sub
     Private Sub rd_Male_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rd_Male.CheckedChanged
+        'Indica se il Pokémon è maschio
         Select Case rd_Male.Checked
             Case True
                 MFBool = "M"
                 btn_Pokemon.Image = Image.FromFile(Application.StartupPath & "\sprites\" & lst_Pokemon.SelectedIndex & ".png")
             Case False
+                'Ho aggiunto la gestione degli errori "Try", perché non tutti
+                'i Pokémon sono diversi nella loro parte femmina, quindi
+                'ogniqualvoltail programma non troverà il corrispondente
+                'di immagine femmina in sprites\female, non farà niente, ma si
+                'limiterà a mettere "Male" come sesso pre-impostato.
                 MFBool = "F"
                 Try
                     btn_Pokemon.Image = Image.FromFile(Application.StartupPath & "\sprites\female\" & lst_Pokemon.SelectedIndex & ".png")
                 Catch FNFExc As IO.FileNotFoundException
-                End Try
-        End Select
-    End Sub
-    Private Sub CheckBox1_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        cmb_Forms.SelectedIndex = i
-        Select Case rd_Male.Checked
-            Case True
-                btn_Pokemon.Image = Image.FromFile(Application.StartupPath & "\sprites\shiny\" & lst_Pokemon.SelectedIndex & ".png")
-            Case False
-                Try
-                    btn_Pokemon.Image = Image.FromFile(Application.StartupPath & "\sprites\shiny\female\" & lst_Pokemon.SelectedIndex & ".png")
-                Catch FNF As System.IO.FileNotFoundException
                     rd_Male.Checked = True
                 End Try
         End Select
     End Sub
     Public Sub cmb_Forms_Filler()
+        'La sub indica al programma come comportarsi a seconda del
+        'Pokémon scelto,aggiungendo per ciascuno la sua lista di forme
+        'disponibili. Se il pokémon non ha forme alternative, allora il
+        'programma darà solo come opzione "Nothing".
         cmb_Forms.Items.Clear()
         Select Case lst_Pokemon.SelectedItem
             Case "Unown"
@@ -181,6 +183,8 @@
         cmb_Forms.SelectedIndex = 0
     End Sub
     Public Sub btn_Image_Adapter()
+        'La sub indica al programma come comportarsi a seconda della
+        'forma del pokémon scelta.
         Select Case cmb_Forms.SelectedItem
             '201 - Unown
             Case "A"
@@ -353,14 +357,6 @@
         Process.Start("http://www.youtube.com/IAL32")
     End Sub
     Private Sub btn_Export_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btn_Export.Click
-        'Blastoise (F) @ Big Root
-        'Trait:  Rain Dish
-        'EVs: 56 HP / 148 Atk / 40 Def / 64 SAtk / 40 SDef / 152 Spd
-        'Docile(Nature)
-        '- Bora
-        '- Attrazione
-        '- Acquanello
-        '- Boato
         Preview.TextBox1.AppendText(lst_Pokemon.SelectedItem & " (" & MFBool & ") " & "@" & cmb_Items.SelectedItem _
                                     & vbCrLf & "Trait:  " & cmb_Trait.SelectedItem _
                                     & vbCrLf & "EVs: " & nup_EVHP.Value & " HP / " & nup_EVAtk.Value & " Atk / " & nup_EVDef.Value & " Def / " & nup_EVSAtk.Value & " SAtk / " & nup_EVSDef.Value & " SDef / " & nup_EVSpd.Value & " Spd" _
